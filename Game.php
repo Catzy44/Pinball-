@@ -15,9 +15,9 @@ class Game {
     }
 
     /**
-     * Wykonaj ruch w grze
+     * Wykonuje ruch w grze
      *
-     * @param  int  $knockedDownPins  Liczba strąconych kręgli
+     * @param  int  $knockedDownPins  Liczba strąconych w ruchu kręgli
      * @return void
      */
     function roll(int $knockedDownPins = 0) : void {
@@ -38,10 +38,11 @@ class Game {
                 $bonus->moves--;
             }
         });
+        $this->bonuses = $this->bonuses->reject(fn(GameBonus $bonus) => $bonus->moves <= 0);
 
         //no bonuses in the last round!
         if($this->frames->count() >= 10) {
-            return;
+           return;
         }
         $currentGameFrame = $this->getCurrentGameFrame();
         if($currentGameFrame->isStreak()) {
@@ -52,28 +53,31 @@ class Game {
         }
     }
 
+    /**
+     * @return bool Wskazuje na to czy gra się już skończyła
+     */
     function isComplete() : bool {
         return
-             $this->frames->count() == 10
+            $this->frames->count() == 10
             && $this->frames->every(fn(GameFrame $frame) => $frame->isComplete());
     }
-
     /**
-     * Sprawdź aktualną liczbę punktów
-     *
-     * @return int Aktualna liczba punktów
+     * @return int Aktualna suma punktów
      */
     function getScore() : int {
         return $this->frames
             ->map(fn(GameFrame $frame) => $frame->getPoints())
             ->sum();
     }
-    function getLastGameFrame() : ?GameFrame {
-        return $this->frames->get($this->frames->count()-2);
-    }
+    /**
+     * @return ?GameFrame Najnowsza ramka gry
+     */
     function getCurrentGameFrame() : ?GameFrame {
         return $this->frames->last();
     }
+    /**
+     * @return ?GameMove Najnowszy wykonany w grze ruch
+     */
     function getCurrentGameMove() : ?GameMove {
         return $this->getCurrentGameFrame()->moves->last();
     }
