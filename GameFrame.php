@@ -29,7 +29,7 @@ class GameFrame {
      * @param int $bonus Dodaje do liczby punktów bonusowych
      */
     public function bumpBonus(int $bonus): void {
-        $this->bonus = $this->bonus + $bonus;
+        $this->bonus += $bonus;
     }
 
     /**
