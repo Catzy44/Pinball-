@@ -11,7 +11,7 @@ class GameFrame {
     /**
      * @param bool $isLastRound Ostatnia ramka gry musi zostać oznaczona przez metodę nadrzędną
      */
-    public function __construct($isLastRound = false) {
+    public function __construct(bool $isLastRound = false) {
         $this->moves = collect([]);
         $this->isLastRound = $isLastRound;
     }
