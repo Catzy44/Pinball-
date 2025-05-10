@@ -12,9 +12,14 @@ $game = new Game();
 
 while(!$game->isComplete()) {
     echo "podaj ilość strąconych kręgli: ";
-    $knockedDownPins = intval(readLineFromIS($inputStream));
+
+    $knockedDownPins = intval(readLineFromIS($inputStream) ?? 0);
+    $knockedDownPins = max($knockedDownPins,0);
+    $knockedDownPins = min($knockedDownPins,10);
     $game->roll($knockedDownPins);
+
     echo "Aktualna liczba punktów: {$game->getScore()}\n";
+
     if($game->getCurrentGameFrame()->isSpare()) {
         echo "SPARE!\n";
     }
@@ -30,8 +35,7 @@ fclose($inputStream);
 echo "----------------------------------------\n\n";
 echo "Podsumowanie gry: \n";
 
-for($i = 0; $i < $game->frames->count(); $i++) {
-    $f = $game->frames[$i];
+$game->frames->each(function(GameFrame $f, int $i) {
     echo "Runda ".($i+1)."\n";
 
     $f->moves->each(function(GameMove $b, int $idx) {
@@ -45,6 +49,6 @@ for($i = 0; $i < $game->frames->count(); $i++) {
         echo "STRIKE!\n";
     }
     echo "Punkty: {$f->getPoints()} \n\n";
-}
+});
 
 echo "Suma zdobytych punktów: {$game->getScore()}\n\n";
